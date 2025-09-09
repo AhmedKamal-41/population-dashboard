@@ -4,6 +4,7 @@ import streamlit as st
 import pandas as pd
 import altair as alt
 import plotly.express as px
+from pathlib import Path
 
 #######################
 # Page configuration
@@ -57,7 +58,18 @@ st.markdown("""
 #######################
 # Load data
 # CSV must have columns: country, year, state (club), region (league)
-df_reshaped = pd.read_csv('/workspaces/population-dashboard/data/soccer_data.csv')
+@st.cache_data(show_spinner=True)
+def load_data():
+    data_path = Path(__file__).parent / "data" / "soccer_data.csv"
+    if data_path.exists():
+        return pd.read_csv(data_path)
+    st.warning("soccer_data.csv not found in /data. Upload a CSV to proceed.")
+    up = st.file_uploader("Upload soccer_data.csv", type="csv")
+    if up is not None:
+        return pd.read_csv(up)
+    st.stop()
+
+df_reshaped = load_data()
 # Normalize column names (just in case)
 df_reshaped.columns = [c.strip().lower() for c in df_reshaped.columns]
 df_reshaped["year"] = pd.to_numeric(df_reshaped["year"], errors="coerce").astype("Int64")
