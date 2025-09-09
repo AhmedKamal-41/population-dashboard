@@ -60,7 +60,7 @@ st.markdown("""
 # CSV must have columns: country, year, state (club), region (league)
 @st.cache_data(show_spinner=True)
 def load_data():
-    data_path = Path(__file__).parent / "data" / "soccer_data.csv"
+    data_path = Path(__file__).parent / "data" / "/workspaces/population-dashboard/data/soccer_data.csv"
     if data_path.exists():
         return pd.read_csv(data_path)
     st.warning("soccer_data.csv not found in /data. Upload a CSV to proceed.")
